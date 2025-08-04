@@ -116,7 +116,7 @@
 	branch = develop
 [submodule "Tensile"]
 	path = math-libs/BLAS/Tensile
-	url = https://github.com/ROCm/Tensile.git
+	url = https://github.com/umarinkovic/Tensile.git
 	branch = develop
 [submodule "rccl-tests"]
 	path = comm-libs/rccl-tests
