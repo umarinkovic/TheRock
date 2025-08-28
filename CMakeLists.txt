@@ -27,6 +27,22 @@ include(therock_job_pools)
 include(therock_testing)
 
 ################################################################################
+# Notices
+# If there are ongoing issues for specific configurations log them here.
+################################################################################
+
+if(WIN32)
+  message(WARNING
+    "*************************************************\n"
+    "Windows builds are currently unstable during the migration to rocm-systems!"
+    " Builds are expected to succeed but there are runtime errors and timeouts."
+    " The last known good commit on Windows is"
+    " https://github.com/ROCm/TheRock/commit/529fa36d69c7d4295317a70d3c5c88000a364b2c"
+    " See https://github.com/ROCm/TheRock/issues/1347 for details.\n"
+    "*************************************************")
+endif()
+
+################################################################################
 # Testing Setup
 # Does normal CMake setup so that BUILD_TESTING functions as a master control
 # switch. Then we set THEROCK_BUILD_TESTING if not explicitly set by the user
