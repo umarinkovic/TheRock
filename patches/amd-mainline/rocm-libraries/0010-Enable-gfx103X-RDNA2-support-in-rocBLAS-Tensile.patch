@@ -1,24 +1,24 @@
-From bc5f5ae3e4a45539aa8f1e6600dd40eee20c5c4b Mon Sep 17 00:00:00 2001
+From d6208972b6e4abadba301b0243a41a22b0c5c3cf Mon Sep 17 00:00:00 2001
 From: umarinkovic <uros.marinkovic@htecgroup.com>
-Date: Mon, 29 Sep 2025 18:07:18 +0000
-Subject: [PATCH] Added support for gfx103X targets in rocBLAS
+Date: Tue, 30 Sep 2025 14:40:01 +0100
+Subject: [PATCH] Enable gfx103X/RDNA2 support in rocBLAS/Tensile
 
 ---
  projects/rocblas/CMakeLists.txt               |  12 +-
- projects/rocblas/library/src/handle.cpp       |  24 ++
+ projects/rocblas/library/src/handle.cpp       |  24 +++
  .../rocblas/library/src/include/handle.hpp    |   2 +
- projects/rocblas/library/src/tensile_host.cpp |  24 ++
- shared/tensile/Tensile/AsmCaps.py             | 220 ++++++++++++++++++
+ projects/rocblas/library/src/tensile_host.cpp |   8 +
+ shared/tensile/Tensile/AsmCaps.py             | 176 ++++++++++++++++++
  shared/tensile/Tensile/Common.py              |   4 +-
  .../cmake/TensileSupportedArchitectures.cmake |   2 +
  .../Source/lib/include/Tensile/AMDGPU.hpp     |  30 +++
  .../include/Tensile/PlaceholderLibrary.hpp    |   6 +
  .../Tensile/Serialization/Predicates.hpp      |   2 +
  .../cmake/TensileSupportedArchitectures.cmake |   2 +
- 11 files changed, 320 insertions(+), 8 deletions(-)
+ 11 files changed, 260 insertions(+), 8 deletions(-)
 
 diff --git a/projects/rocblas/CMakeLists.txt b/projects/rocblas/CMakeLists.txt
-index 8fb7ceeb48..689aa1881c 100644
+index 2e56386822..b8f57dd62a 100644
 --- a/projects/rocblas/CMakeLists.txt
 +++ b/projects/rocblas/CMakeLists.txt
 @@ -80,12 +80,12 @@ list( APPEND CMAKE_PREFIX_PATH ${ROCM_PATH}/llvm ${ROCM_PATH} ${ROCM_PATH}/hip /
@@ -41,10 +41,10 @@ index 8fb7ceeb48..689aa1881c 100644
    set( TARGET_LIST_ROCM_5.6 "gfx908:xnack+;gfx90a:xnack+")
    set( TARGET_LIST_ROCM_5.7 "gfx908:xnack+;gfx90a:xnack+;gfx942:xnack+")
 diff --git a/projects/rocblas/library/src/handle.cpp b/projects/rocblas/library/src/handle.cpp
-index 57661135b9..296ae24fe3 100644
+index 7731691ffa..84c21bfa58 100644
 --- a/projects/rocblas/library/src/handle.cpp
 +++ b/projects/rocblas/library/src/handle.cpp
-@@ -378,6 +378,30 @@ Processor _rocblas_handle::getActiveArch()
+@@ -279,6 +279,30 @@ Processor _rocblas_handle::getActiveArch()
      {
          return Processor::gfx1030;
      }
@@ -76,10 +76,10 @@ index 57661135b9..296ae24fe3 100644
      {
          return Processor::gfx1100;
 diff --git a/projects/rocblas/library/src/include/handle.hpp b/projects/rocblas/library/src/include/handle.hpp
-index a0a1760be2..d0956155fe 100644
+index f0668632fa..f00a5a0471 100644
 --- a/projects/rocblas/library/src/include/handle.hpp
 +++ b/projects/rocblas/library/src/include/handle.hpp
-@@ -90,8 +90,10 @@ enum class Processor : int
+@@ -83,8 +83,10 @@ enum class Processor : int
      gfx1030 = 1030,
      gfx1031 = 1031,
      gfx1032 = 1032,
@@ -91,33 +91,24 @@ index a0a1760be2..d0956155fe 100644
      gfx1101 = 1101,
      gfx1102 = 1102,
 diff --git a/projects/rocblas/library/src/tensile_host.cpp b/projects/rocblas/library/src/tensile_host.cpp
-index 7a40989f35..d06ed874e0 100644
+index b0e72cc3dc..d06ed874e0 100644
 --- a/projects/rocblas/library/src/tensile_host.cpp
 +++ b/projects/rocblas/library/src/tensile_host.cpp
-@@ -281,6 +281,30 @@ namespace
+@@ -289,6 +289,10 @@ namespace
          {
-             return Tensile::LazyLoadingInit::gfx1030;
+             return Tensile::LazyLoadingInit::gfx1032;
          }
-+        else if(deviceString.find("gfx1031") != std::string::npos)
-+        {
-+            return Tensile::LazyLoadingInit::gfx1031;
-+        }
-+        else if(deviceString.find("gfx1032") != std::string::npos)
-+        {
-+            return Tensile::LazyLoadingInit::gfx1032;
-+        }
 +        else if(deviceString.find("gfx1033") != std::string::npos)
 +        {
 +            return Tensile::LazyLoadingInit::gfx1033;
 +        }
-+        else if(deviceString.find("gfx1034") != std::string::npos)
-+        {
-+            return Tensile::LazyLoadingInit::gfx1034;
-+        }
-+        else if(deviceString.find("gfx1035") != std::string::npos)
-+        {
-+            return Tensile::LazyLoadingInit::gfx1035;
-+        }
+         else if(deviceString.find("gfx1034") != std::string::npos)
+         {
+             return Tensile::LazyLoadingInit::gfx1034;
+@@ -297,6 +301,10 @@ namespace
+         {
+             return Tensile::LazyLoadingInit::gfx1035;
+         }
 +        else if(deviceString.find("gfx1036") != std::string::npos)
 +        {
 +            return Tensile::LazyLoadingInit::gfx1036;
@@ -126,57 +117,13 @@ index 7a40989f35..d06ed874e0 100644
          {
              return Tensile::LazyLoadingInit::gfx1100;
 diff --git a/shared/tensile/Tensile/AsmCaps.py b/shared/tensile/Tensile/AsmCaps.py
-index 05df6f2309..d3d3631e23 100644
+index cacc1848b7..3cb9ef3509 100644
 --- a/shared/tensile/Tensile/AsmCaps.py
 +++ b/shared/tensile/Tensile/AsmCaps.py
-@@ -609,6 +609,226 @@ def getCapabilitiesCache(rocmVersion: NamedTuple) -> dict:
+@@ -653,6 +653,182 @@ def getCapabilitiesCache(rocmVersion: NamedTuple) -> dict:
                    'v_mov_b64': False,
                    'v_pk_fma_f16': True,
                    'v_pk_fmac_f16': False},
-+     (10, 3, 2): {'HasAddLshl': True,
-+                  'HasAtomicAdd': False,
-+                  'HasDirectToLdsDest': False,
-+                  'HasDirectToLdsNoDest': True,
-+                  'HasExplicitCO': True,
-+                  'HasExplicitNC': True,
-+                  'HasGLCModifier': True,
-+                  'HasNTModifier': False,
-+                  'HasLshlOr': True,
-+                  'HasMFMA': False,
-+                  'HasMFMA_b8': False,
-+                  'HasMFMA_bf16_1k': False,
-+                  'HasMFMA_bf16_original': False,
-+                  'HasMFMA_constSrc': False,
-+                  'HasMFMA_f64': False,
-+                  'HasMFMA_f8': False,
-+                  'HasMFMA_i8_908': False,
-+                  'HasMFMA_i8_940': False,
-+                  'HasMFMA_vgpr': False,
-+                  'HasMFMA_xf32': False,
-+                  'HasSMulHi': True,
-+                  'HasWMMA': False,
-+                  'KernargPreloading': False,
-+                  'MaxLgkmcnt': 15,
-+                  'MaxVmcnt': 63,
-+                  'SupportedISA': True,
-+                  'SupportedSource': True,
-+                  'VOP3v_dot4_i32_i8': True,
-+                  'v_dot2_f32_f16': True,
-+                  'v_dot2c_f32_f16': True,
-+                  'v_dot4_i32_i8': False,
-+                  'v_dot4c_i32_i8': True,
-+                  'v_fma_f16': True,
-+                  'v_fma_f32': True,
-+                  'v_fma_f64': True,
-+                  'v_fma_mix_f32': True,
-+                  'v_fmac_f16': False,
-+                  'v_fmac_f32': True,
-+                  'v_mac_f16': False,
-+                  'v_mac_f32': False,
-+                  'v_mad_mix_f32': False,
-+                  'v_mov_b64': False,
-+                  'v_pk_fma_f16': True,
-+                  'v_pk_fmac_f16': False},
 +     (10, 3, 3): {'HasAddLshl': True,
 +                  'HasAtomicAdd': False,
 +                  'HasDirectToLdsDest': False,
@@ -352,19 +299,19 @@ index 05df6f2309..d3d3631e23 100644
 +                  'v_mad_mix_f32': False,
 +                  'v_mov_b64': False,
 +                  'v_pk_fma_f16': True,
-+                  'v_pk_fmac_f16': False},             
++                  'v_pk_fmac_f16': False},
       (11, 0, 0): {'HasAddLshl': True,
                    'HasAtomicAdd': True,
                    'HasDirectToLdsDest': False,
 diff --git a/shared/tensile/Tensile/Common.py b/shared/tensile/Tensile/Common.py
-index b36820e6b5..047d80de48 100644
+index 86c6c57782..047d80de48 100644
 --- a/shared/tensile/Tensile/Common.py
 +++ b/shared/tensile/Tensile/Common.py
 @@ -248,7 +248,7 @@ globalParameters["MaxFileName"] = 64              # If a file name would be long
  globalParameters["SupportedISA"] = [(8,0,3),
                                      (9,0,0), (9,0,6), (9,0,8), (9,0,10),
                                      (9,4,2), (9,5,0),
--                                    (10,1,0), (10,1,1), (10,1,2), (10,3,0), (10,3,1),
+-                                    (10,1,0), (10,1,1), (10,1,2), (10,3,0), (10,3,1), (10,3,2),
 +                                    (10,1,0), (10,1,1), (10,1,2), (10,3,0), (10,3,1), (10,3,2), (10,3,3), (10,3,4), (10,3,5), (10,3,6),
                                      (11,0,0), (11,0,1), (11,0,2), (11,0,3),
                                      (11,5,0), (11,5,1),
@@ -455,7 +402,7 @@ index 317250db16..0188a3c661 100644
              {
                  return AMDGPU::Processor::gfx1100;
 diff --git a/shared/tensile/Tensile/Source/lib/include/Tensile/PlaceholderLibrary.hpp b/shared/tensile/Tensile/Source/lib/include/Tensile/PlaceholderLibrary.hpp
-index a21e584d29..105b627c32 100644
+index a21e584d29..b0ae584862 100644
 --- a/shared/tensile/Tensile/Source/lib/include/Tensile/PlaceholderLibrary.hpp
 +++ b/shared/tensile/Tensile/Source/lib/include/Tensile/PlaceholderLibrary.hpp
 @@ -52,8 +52,10 @@ namespace Tensile
@@ -480,7 +427,7 @@ index a21e584d29..105b627c32 100644
          case LazyLoadingInit::gfx1035:
              return "TensileLibrary_*_gfx1035";
 +        case LazyLoadingInit::gfx1036:
-+            return "TensileLibrary_*_gfx1036";    
++            return "TensileLibrary_*_gfx1036";
          case LazyLoadingInit::gfx1100:
              return "TensileLibrary_*_gfx1100";
          case LazyLoadingInit::gfx1101:
@@ -515,5 +462,5 @@ index e8a28d3bfe..4684fcd3a9 100644
          "gfx1101"
          "gfx1102"
 -- 
-2.43.0
+2.51.0.windows.1
 
