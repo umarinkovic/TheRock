@@ -137,10 +137,26 @@ def do_download(args: argparse.Namespace):
     build_dir = resolve_build_dir(args)
     stage_dirs = find_stage_dirs(build_dir)
     if not stage_dirs:
-        raise CLIError(
-            f"There are no stage directories in the build dir {build_dir}: "
-            f"Has an initial configure been done yet?"
+        cmd = [
+            "cmake",
+            "-S",
+            ".",
+            "-B",
+            str(build_dir),
+            "-GNinja",
+            f"-DTHEROCK_AMDGPU_FAMILIES={args.target}",
+        ]
+        print(
+            f"There are no stage directories in {build_dir}; running configure with parameters: "
+            f"{cmd}"
         )
+        result = subprocess.run(cmd)
+        stage_dirs = find_stage_dirs(build_dir)
+        if result.returncode != 0 or not stage_dirs:
+            raise CLIError(
+                f"There are no stage directories in the build dir {build_dir} and automatic configure failed: "
+                f"Perform a manual configure."
+            )
     # Make sure the fetch temp dir is on the same file system as the build dir
     # so that moving works.
     temp_dir = build_dir / ".fetch_artifacts"
