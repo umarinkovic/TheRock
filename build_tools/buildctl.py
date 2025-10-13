@@ -11,10 +11,6 @@ come from can vary:
 * From a current build invocation where we just want to mark the project as
   not involved in the build any longer.
 
-Where such prebuilts come from is presently outside of the scope of this
-utility, but it may be expanded to pull automatically from the CI, etc, in the
-future.
-
 Basic Usage
 -----------
 The most basic usage of the tool is to enable/disable sub-projects from the
@@ -43,6 +39,20 @@ A report will be printed and if any changes to project state were made,
 "Reconfiguring..." will be printed and a CMake reconfigure of TheRock will be
 done to pick up the changes.
 
+Bootrstrapping from a CI run
+----------------------------
+The tool also offers the option of partial or full bootrstraping from artifacts produced by a CI run.
+with the sub-command "download", which also takes arguments:
+    * --run-id
+    * --target
+    * List of regular expressions to explicitly include (default to all).
+    * `--exclude` + list of regular expressions to exclude (default to none).
+
+Projects which are boostrapped through CI artifacts are automatically marked as disabled.
+
+Example usage:
+python build_tools/buildctl.py download --run-id 16977874022 --target gfx120X-all --exclude rand --build-dir /therock/output/build
+
 What is going on under the covers
 ---------------------------------
 Under the covers, the build system operates off of `stage/` subdirectories in
@@ -54,8 +64,6 @@ date check (so if you touch this file, it will invalidate all dependents,
 forcing them to rebuild). You can manage these files yourself with `find`,
 `touch`, and `rm` but it is tedious. This tool aims to handle common workflows
 without filesystem hacking.
-
-TODO: Merge the functionality in bootstrap_build.py into this script.
 """
 
 import argparse
