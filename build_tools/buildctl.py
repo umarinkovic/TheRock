@@ -170,7 +170,6 @@ def do_download(args: argparse.Namespace):
             str(extract_dir),
             "--run-id",
             args.run_id,
-            "--all",
             "--target",
             args.target,
         ]
