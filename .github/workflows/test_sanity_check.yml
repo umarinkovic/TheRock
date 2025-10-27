@@ -76,6 +76,7 @@ jobs:
           repository: "ROCm/TheRock"
 
       - name: Run setup test environment workflow
+        timeout-minutes: 30
         uses: './.github/actions/setup_test_environment'
         with:
           ARTIFACT_GROUP: ${{ inputs.artifact_group }}
