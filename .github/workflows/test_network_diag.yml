@@ -1,0 +1,32 @@
+name: Test Network Diagnostic
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test-linux:
+    name: Test Diagnostics on Ubuntu
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Step 1 - Force failure
+        run: |
+          echo "Simulating a failure..."
+          exit 1  # this makes the job fail intentionally
+
+      - name: Step 2 - Run diagnostics if failure occurred
+        if: ${{ failure() }}
+        uses: ./.github/actions/network-diagnostics
+
+  test-windows:
+    name: Test Diagnostics on Windows
+    runs-on: windows-latest
+    steps:
+      - name: Step 1 - Force failure
+        shell: pwsh
+        run: |
+          Write-Host "Simulating a failure..."
+          exit 1  # force failure here too
+
+      - name: Step 2 - Run diagnostics if failure occurred
+        if: ${{ failure() }}
+        uses: ./.github/actions/network-diagnostics
