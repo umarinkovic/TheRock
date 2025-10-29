@@ -1,0 +1,45 @@
+name: Test Setup Test Environment
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test_linux_setup_test_environment:
+    name: "Test Linux Setup Test Environment"
+    runs-on: ubuntu-24.04
+
+    steps:
+    - name: "Checkout"
+      uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+
+    - name: "Setup Test Environment"
+      uses: ./.github/actions/setup_test_environment
+      with:
+        VENV_DIR: "$HOME/.venv"
+        OUTPUT_ARTIFACTS_DIR: "$HOME/.artifacts"
+        ARTIFACT_GROUP: "gfx110X-dgpu"
+        ARTIFACT_RUN_ID: "15685736080"
+        FETCH_ARTIFACT_ARGS: "--blas"
+        IS_PR_FROM_FORK: true
+
+
+  test_windows_setup_test_environment:
+    name: "Test Windows Setup Test Environment"
+    runs-on: "windows-latest"
+
+    steps:
+    - name: "Checkout"
+      uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+
+    - name: "Setup Test Environment"
+      uses: ./.github/actions/setup_test_environment
+      with:
+        VENV_DIR: "C:\\therock\\.venv"
+        OUTPUT_ARTIFACTS_DIR: "C:\\therock\\.artifacts"
+        ARTIFACT_GROUP: "gfx110X-dgpu"
+        ARTIFACT_RUN_ID: "15685736080"
+        FETCH_ARTIFACT_ARGS: "--blas"
+        IS_PR_FROM_FORK: true
