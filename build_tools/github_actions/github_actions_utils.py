@@ -191,8 +191,7 @@ def retrieve_bucket_info(
     if github_repository:
         _log(f"  (explicit) github_repository: {github_repository}")
     if not github_repository:
-        # Default to the current repository (if any), else ROCm/TheRock.
-        github_repository = os.getenv("GITHUB_REPOSITORY", "ROCm/TheRock")
+        github_repository = "ROCm/TheRock"
         _log(f"  (implicit) github_repository: {github_repository}")
 
     if workflow_run_id:
