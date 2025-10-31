@@ -24,6 +24,7 @@ jobs:
         ARTIFACT_RUN_ID: "15685736080"
         FETCH_ARTIFACT_ARGS: "--blas"
         IS_PR_FROM_FORK: true
+        REQUIREMENTS: '-r requirements-test-base.txt -r requirements-test-pytest.txt'
 
 
   test_windows_setup_test_environment:
