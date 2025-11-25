@@ -210,7 +210,7 @@ def main():
             "hipcc_available": rocm_availability["hipcc"],
             "hipcc_version": hipcc_v,
         },
-        "rocminfo": info,
+        "info": info,
     }
 
     print(json.dumps(result, indent=2))
