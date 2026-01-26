@@ -355,7 +355,7 @@ gemmla/
     therock_subprojects.cmake
     therock_artifact_gemm-sparse.toml
   la/
-    [rocsolver] -> projects/rocsolver
+    [rocSOLVER] -> projects/rocSOLVER
     [hipsolver] -> projects/hipsolver
     therock.cmake
     therock_subprojects.cmake

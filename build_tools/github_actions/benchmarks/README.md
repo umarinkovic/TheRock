@@ -31,7 +31,7 @@ Automated benchmark testing framework for ROCm libraries with system detection, 
 - `benchmarks/scripts/test_rocblas_benchmark.py` - rocBLAS benchmark suite
 - `benchmarks/scripts/test_rocfft_benchmark.py` - ROCfft benchmark suite
 - `benchmarks/scripts/test_rocrand_benchmark.py` - ROCrand benchmark suite
-- `benchmarks/scripts/test_rocsolver_benchmark.py` - ROCsolver benchmark suite
+- `benchmarks/scripts/test_rocSOLVER_benchmark.py` - ROCsolver benchmark suite
 
 ## Project Structure
 
@@ -45,7 +45,7 @@ build_tools/github_actions/
 │   │   ├── test_rocblas_benchmark.py
 │   │   ├── test_rocfft_benchmark.py
 │   │   ├── test_rocrand_benchmark.py
-│   │   └── test_rocsolver_benchmark.py
+│   │   └── test_rocSOLVER_benchmark.py
 │   │
 │   ├── configs/                # Benchmark configs
 │   │   ├── config.yml          # Framework configuration
@@ -116,7 +116,7 @@ The following benchmark tests are defined in `benchmarks/benchmark_test_matrix.p
 | `rocblas_bench`   | rocBLAS   | Linux          | 60 min  | 1      |
 | `rocfft_bench`    | ROCfft    | Linux, Windows | 60 min  | 1      |
 | `rocrand_bench`   | ROCrand   | Linux, Windows | 60 min  | 1      |
-| `rocsolver_bench` | ROCsolver | Linux, Windows | 60 min  | 1      |
+| `rocSOLVER_bench` | ROCsolver | Linux, Windows | 60 min  | 1      |
 
 **GPU Family Support:**
 

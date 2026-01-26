@@ -24,7 +24,7 @@ the source of truth for all issue tracking, project planning, and code contribut
 we leverage an open source stack for all development tools and infrastructure so that it they can be
 easily leveraged in any fork.
 
-We are also active on the [AMD Developer Community Discord Server](https://discord.com/invite/amd-dev)
+We are also active on the [AMD Developer Community [[[REDACTED]]] Server]([[[REDACTED]]])
 in channels like `#therock-contributors` and `#rocm-build-install-help`.
 
 ## Development workflows
@@ -53,7 +53,7 @@ General issue guidelines:
 Discussion about new features is welcome via
 
 - Filing a [GitHub issue](https://github.com/ROCm/TheRock/issues)
-- Reaching out [on Discord](https://discord.com/invite/amd-dev)
+- Reaching out [on [[[REDACTED]]]]([[[REDACTED]]])
 - Posting a [GitHub discussion](https://github.com/ROCm/TheRock/discussions) (discussions are not as active)
 
 ### Pull requests
